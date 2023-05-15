@@ -1,3 +1,14 @@
 Research and analyze which of the vulnerabilities appear to be related to the code that was deployed for the environment in this project.
+ Attack Instance Security Group:
+ - Security Groups allow ingress from 0.0.0.0/0 to port 22
+ WebApp Security Group:
+ - Security groups allow ingress from 0.0.0.0/0 to port 22
+ - Security groups allow ingress from 0.0.0.0/0 to port 3389
+ EC2 instance have a public IP address and not configured to use with Systems Manager.
+ S3 bucket doesn't have a lifecycle policy enabled.
 
 Bonus - provide recommendations on how to remediate the vulnerabilities.
+ - We should put the instances behind ELB and move it into private subnet to remove the public
+IP addresses, configure instance to ssh with the Systems Manager and add a lifecycle policy 
+to the S3 buckets.
+ - Only keep the web services's inbound rules traffic from ELB security group.

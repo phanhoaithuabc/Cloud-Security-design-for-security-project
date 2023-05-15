@@ -1,3 +1,9 @@
 # Describe GuardDuty findings that were detected related to the brute force attack
+ - Instances that perform an SSH brute force attack
+ - Instances was attacked by SSH brute force attack
 
 # Research the AWS Guard Duty documentation page and explain how GuardDuty may have detected this attack - i.e. what was its source of information.
+Amazon GuardDuty monitor some data sources like VPC Flow Logs that record information 
+about the IP traffic and from network interfaces in our network. 
+GuardDuty detects the attack through monitoring traffic on port 22 that says in GuardDuty's document.
+Amazon GuardDuty will receive data from CloudTrail logs, VPC Flow logs, DNS logs.

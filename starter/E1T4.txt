@@ -1,5 +1,11 @@
 Based on the architecture diagram, and the steps you have taken so far to upload data and access the application web service, identify at least 2 obvious poor practices as it relates to security.  Include justification.
 
 # Poor practice 1
+Security Group has port 80 open to the Internet but not use to communicate 
+between web instance and ELB because it use port 5000. Then we should remove 
+open port 80 rule on Security Group and limit the port 5000 only point to
+ELB security group.
 
 # Poor practice 2
+The default SG allows all traffic with all protocols and ports. We should configure 
+access using the least-privilege principle.
