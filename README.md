@@ -163,10 +163,11 @@ instances; changing the default security group in our VPC to restrict all traffi
 removing the security group inbound and outbound rules that allow all traffic on all ports
 from all protocols.
 
-**Deliverables:** 
-- **E2T2_config.png** - Screenshot of AWS Config showing non-compliant rules.
-- **E2T2_inspector.png** - Screenshot of AWS Inspector showing scan results.
-- **E2T2.png_securityhub.png** - Screenshot of AWS Security Hub showing compliance standards for CIS foundations.
+- Screenshot of AWS Config showing non-compliant rules. ![E2T2_config](starter/E2T2_config.png)
+
+- Screenshot of AWS Inspector showing scan results. ![E2T2_inspector](starter/E2T2_inspector.png)
+
+- Screenshot of AWS Security Hub showing compliance standards for CIS foundations. ![E2T2_securityhub](starter/E2T2_securityhub.png)
  
 ## **III. Attack Simulation**
 Making an SSH connection to the application server using brute force password cracking.
@@ -181,10 +182,9 @@ hydra -l ubuntu -P rockyou.txt ssh://<YourApplicationServerDnsNameHere>
 ```
 You should see output similar to the following:
 ![Brute Force](starter/brute_force.png)
+
 Wait 10 - 15 minutes and check AWS Guard Duty.
- 
-**Deliverables:**
-- **E3T1_guardduty.png** - Screenshot of Guard Duty findings specific to the Exercise 3, Task 1 attack.
+![E3T1_guardduty](starter/E3T1_guardduty.png)
  
 ### **2. Accessing Secret Recipe Data File from S3**
  
@@ -206,7 +206,8 @@ Choose one of the application vulnerability attacks outlined in the OWASP top 10
     c. Repeat the malicious URL attempts
     d. Observe the WAF blocking these requests.
 
-- **E3T2_s3breach.png** - Screenshot showing the resulting breach after the brute force attack.
+- The resulting breach after the brute force attack. ![E3T2_s3breach](starter/E3T2_s3breach.png)
+
 ## **IV. Implement Security Hardening**
 ### **1. Remediation plan**
 - Adjusting the SG of Web Server instance to only allow SSH connections
@@ -231,141 +232,60 @@ PasswordAuthentication yes
 # change it to:
 PasswordAuthentication no
 # save and exit
-#restart SSH server
+# restart SSH server
 sudo service ssh restart
 ```
-2. Test that this made a difference.  Run the brute force attack again from Exercise 3, Task 1.  
+2. Test that this made a difference.  Run the brute force attack again from Exercise 3, Task 1.
+![E4T2_sshbruteforce](starter/E4T2_sshbruteforce.png)
 
-3. Take a screenshot of the terminal window where you ran the attack highlighting the remediation and name it E4T2_sshbruteforce.png.
-
-**Deliverables:**
-- **E4T2_sshbruteforce.png** - Screenshot of terminal window showing the brute force attack and the remediation.
-
-#### Apply Network Controls to Restrict Application Server Traffic
-
+#### **Apply Network Controls to Restrict Application Server Traffic**
 1. Update the security group which is assigned to the web application instance.  The requirement is that we only allow connections to port 5000 from the public subnet where the application load balancer resides.
+![E4T2_networksg](starter/E4T2_networksg.png)
+
 2. Test that the change worked by attempting to make an SSH connection to the web application instance using its public URL.
-3. Submit a screenshot of the security group change and your SSH attempt.
+![E4T2_sshattempt](starter/E4T2_sshattempt.png)
 
-**Deliverables**:
-- **E4T2_networksg.png** - Screenshot of the security group change. 
-- **E4T2_sshattempt.png** - Screenshot of your SSH attempt.
-
-#### Least Privilege Access to S3  
-
+#### **Least Privilege Access to S3**
 1. Update the IAM policy for the instance profile role used by the web application instance to only allow read access to the free recipes S3 bucket.
+![E4T2_s3iampolicy.png](starter/E4T2_s3iampolicy.png)
+
 2. Test the change by using the attack instance to attempt to copy the secret recipes.
-3. Submit a screenshot of the updated IAM policy and the attempt to copy the files. 
+![E4T2_s3copy](starter/E4T2_s3copy.png)
 
-**Deliverables:**
-- **E4T2_s3iampolicy.png** - Screenshot of the updated IAM policy.
-- **E4T2_s3copy.png** - Screenshot of the failed copy attempt.
+#### **Apply Default Server-side Encryption to the S3 Bucket**
+This will cause the S3 service to encrypt any objects that are stored going forward by default. Use the below guide to enable this on both S3 buckets. [Amazon S3 Default Encryption for S3 Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-encryption.html)
 
-#### Apply Default Server-side Encryption to the S3 Bucket
-
-This will cause the S3 service to encrypt any objects that are stored going forward by default.
-Use the below guide to enable this on both S3 buckets.   
-[Amazon S3 Default Encryption for S3 Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-encryption.html)
-
-Capture the screenshot of the secret recipes bucket showing that default encryption has been enabled.
-
-**Deliverables**:
-- **E4T2_s3encryption.png** - Screenshot of the S3 bucket policy.
+![E4T2_s3encryption](starter/E4T2_s3encryption.png)
 
 ### **3. Check Monitoring Tools to see if the Changes that were made have Reduced the Number of Findings**
+    a. Go to AWS inspector and run the inspector scan that was run in Exercise II.
+    b. After 20-30 mins - check Security Hub to see if the finding count reduced.
+    c. Check AWS Config rules to see if any of the rules are now in compliance.
 
-1. Go to AWS inspector and run the inspector scan that was run in Exercise 2.
-2. After 20-30 mins - check Security Hub to see if the finding count reduced.
-3. Check AWS Config rules to see if any of the rules are now in compliance.
-4. Submit screenshots of Inspector, Security Hub, and AWS Config titled E4T3_inspector.png, E4T3_securityhub.png, and E4T3_config.png respectively.
+- Screenshot of Security Hub after reevaluating the number of findings. ![E4T3_securityhub](starter/E4T3_securityhub.png)
 
-**Deliverables**:
-- **E4T3_securityhub.png** - Screenshot of Security Hub after reevaluating the number of findings.
-- **E4T3_config.png** - Screenshot of Config after reevaluating the number of findings.
-- **E4T3_inspector.png** - Screenshot of Inspector after reevaluating the number of findings.
+- Screenshot of Config after reevaluating the number of findings. ![E4T3_config](starter/E4T3_config.png)
 
+- Screenshot of Inspector after reevaluating the number of findings. ![E4T3_inspector](starter/E4T3_inspector.png)
 ### **4. Questions and Analysis**
-
 1. What additional architectural change can be made to reduce the internet-facing attack surface of the web application instance.
+    - Put the web application into a private subnet
+    - Add Cloudfront for web application
 2. Assuming the IAM permissions for the S3 bucket are still insecure, would creating VPC private endpoints for S3 prevent the unauthorized access to the secrets bucket.
+    - It wouldn't prevent unauthorized access to the secrets bucket because IAM permissions is still there
 3. Will applying default encryption setting to the s3 buckets encrypt the data that already exists?
+    - No, it will apply only to new object that we put after that.
 4. The changes you made above were done through the console or CLI; describe the outcome if the original cloud formation templates are applied to this environment?
-
-Submit your answers in E4T4.txt.
-
-**Deliverables**:
-- **E4T4.txt** - Answers from prompts in Exercise 4, Task 4.
-
-###  _Optional Standout Suggestion_ **5 - Additional Hardening**
-
-Make changes to the environment by updating the cloud formation template. You would do this by copying c3-app.yml and c3-s3.yml and putting your new code into c3-app_solution.yml and c3-s3_solution.yml.
-Brainstorm and list additional hardening suggestions aside from those implemented that would protect the data in this environment. Submit your answers in E4T5.txt.
-
-**Deliverables**:
-- _Optional_ **c3-app_solution.yml** and **c3-s3_solution.yml** - updated cloud formation templates which reflect changes made in E4 tasks related to AWS configuration changes.
-- _Optional_ **E4T5.txt** - Additional hardening suggestions from Exercise 4, Task 5.
-
+    - The original cloud formation templates will override the changes we do before that.
 ## **V. Designing a DevSecOps Pipeline**
-
-Take a look at a very common deployment pipeline diagrammed below:
 
 ![DevOpsPipeline](starter/DevOpsPipeline.png)
 
 The high-level steps are as follows:
-
 1. The user makes a change to the application code or OS configuration for a service.
 2. Once the change is committed to source, a build is kicked off resulting in an AMI or a container image.
 3. The infrastructure as code is updated with the new AMI or container image to use.
 4. Changes to cloud configuration or infrastructure as code may have also been committed.
 5. A deployment to the environment ensues applying the changes
-
-**_Deliverables for Exercise 5:_**
-- **DevSecOpsPipline.[ppt or png]** - Your updated pipeline.
-- **E5T2.txt** - Answer from prompts in Exercise 5, Task 2.
-- *Optional* **E5T3.png** - Screenshot of tool that has identified bad practices.
-- *Optional* **E5T3.txt** - Answers from prompts in Exercise 5, Task 3.
-
-### Task 1:  Design a DevSecOps pipeline
-
-Update the starter DevOpsPipeline.ppt (or create your own diagram using a different tool)
-At minimum you will include steps for:
-- Infrastructure as code compliance scanning.
-- AMI or container image scanning.
-- Post-deployment compliance scanning.
-
-Submit your design as a ppt or png image named DevSecOpsPipeline.[ppt or png].
-
-**Deliverables**:
-- **DevSecOpsPipline.[ppt or png]** - Your updated pipeline.
-
-### Task 2 - Tools and Documentation
-      
-You will need to determine appropriate tools to incorporate into the pipeline to ensure that security vulnerabilities are found.
-
-1. Identify tools that will allow you to do the following:
- a. Scan infrastructure as code templates.
- b. Scan AMI’s or containers for OS vulnerabilities.
- c. Scan an AWS environment for cloud configuration vulnerabilities.
-2. For each tool - identify an example compliance violation or vulnerability which it might expose.
-
-Submit your answers in E5T2.txt
-
-**Deliverables**:
-- **E5T2.txt** - Answer from prompts in Exercise 5, Task 2.
-
-### _Optional Standout Suggestion_ Task 3 - Scanning Infrastructure Code
-
-- Run an infrastructure as code scanning tool on the cloud formation templates provided in the starter.
-- Take a screenshot of the tool that has correctly identified bad practices.
-- If you had completed the remediations by updating the cloud formation templates, run the scanner and compare outputs showing that insecure configurations were fixed.
-
-**Deliverables**:
-- _Optional_ **E5T3.png** - Screenshot of tool that has identified bad practices.
-- _Optional_ **E5T3.txt** - Answers from prompts in Exercise 5, Task 3.
-
-## **VI. Clean up**
-
-Once your project has been submitted and reviewed - to prevent undesired charges don’t forget to: 
-- Disable Security Hub and Guard Duty.
-- Delete recipe files uploaded to the S3 buckets.
-- Delete your cloud formation stacks.
+### **Design a DevSecOps pipeline**
+![DevSecOpsPipeline](starter/DevSecOpsPipeline.png)
